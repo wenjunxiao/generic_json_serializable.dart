@@ -1,0 +1,1 @@
+# generic_json_serializable.dart
