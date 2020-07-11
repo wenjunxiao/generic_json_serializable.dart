@@ -1,0 +1,18 @@
+# Read about `build.yaml` at https://pub.dev/packages/build_config
+targets:
+  $default:
+    builders:
+      json_serializable:
+        enabled: false
+      generic_json_serializable:
+        generate_for:
+          - test/generic/*
+
+builders:
+  generic_json_serializable:
+    import: "package:generic_json_serializable/generic_json_serializable.dart"
+    builder_factories: ["genericJsonBuilder"]
+    build_extensions: {".dart": [".generic_json.dart"]}
+    build_to: cache # 构建输出:cache-缓存，不生成文件;source-生成源文件
+    auto_apply: dependents
+    applies_builders: ["source_gen|combining_builder"]
