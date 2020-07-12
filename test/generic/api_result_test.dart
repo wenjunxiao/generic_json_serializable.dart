@@ -31,6 +31,37 @@ class ApiResultMatcher extends Matcher {
   }
 }
 
+class ApiResultsMatcher extends Matcher {
+  final ApiResults<User> expected;
+  ApiResultsMatcher(this.expected);
+  @override
+  Description describe(Description description) {
+    return description;
+  }
+
+  @override
+  bool matches(desc, Map matchState) {
+    if (desc is ApiResults<User>) {
+      return desc.success == expected.success &&
+          desc.error == expected.error &&
+          usersEquals(desc.data, expected.data);
+    }
+    return false;
+  }
+
+  bool usersEquals(List<User> u1, List<User> u2) {
+    if (u1 == null && u2 == null) return true;
+    if (u1 == null || u2 == null) return false;
+    if (u1.length != u2.length) return false;
+    for (var i = 0; i < u1.length; i++) {
+      if (u1[i].uid != u2[i].uid || u1[i].name != u2[i].name) {
+        return false;
+      }
+    }
+    return true;
+  }
+}
+
 void main() {
   final Map<String, dynamic> json = <String, dynamic>{
     'success': true,
@@ -66,6 +97,13 @@ void main() {
     test('cannot ignore all type field convert', () {
       expect(() => ApiResult<String, User>.fromJson(json),
           throwsA(isA<CastError>()));
+    });
+
+    test('list is null', () {
+      expect(
+          ApiResults<User>.fromJson(
+              {'success': false, 'error': 'error', 'data': null}),
+          ApiResultsMatcher(ApiResults<User>(false, 'error', null)));
     });
   });
 }

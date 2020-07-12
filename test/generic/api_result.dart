@@ -22,3 +22,20 @@ class ApiResult<E, D> {
   Map<String, dynamic> toJson({Function toJson1, Function toJson2}) =>
       _$ApiResultToJson<E, D>(this, toJsonE: toJson1, toJsonD: toJson2);
 }
+
+@JsonSerializable()
+class ApiResults<T> {
+  @JsonKey(name: 'error')
+  final String error;
+  @JsonKey(name: 'success')
+  final bool success;
+  @GenericKey(name: 'data')
+  final List<T> data;
+  ApiResults(this.success, this.error, this.data);
+
+  factory ApiResults.fromJson(Map<String, dynamic> json, {dynamic fromJson1}) =>
+      _$ApiResultsFromJson<T>(json, fromJsonT: fromJson1);
+
+  Map<String, dynamic> toJson({Function toJson1}) =>
+      _$ApiResultsToJson<T>(this, toJsonT: toJson1);
+}

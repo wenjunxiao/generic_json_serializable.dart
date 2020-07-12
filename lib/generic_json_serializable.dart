@@ -43,7 +43,9 @@ class GenericHelper extends TypeHelper<TypeHelperContextWithConfig> {
       return null;
     }
     var fn = 'fromJson${targetType.element.name}';
-    return '($fn == null ? $expression : $fn($expression)) as ${targetType.element.name}';
+    var output =
+        '($fn == null ? $expression : $fn($expression)) as ${targetType.element.name}';
+    return commonNullPrefix(context.nullable, expression, output).toString();
   }
 
   @override
@@ -122,3 +124,9 @@ class GenericSerializableGenerator extends JsonSerializableGenerator {
     }
   }
 }
+
+Object commonNullPrefix(
+        bool nullable, String expression, Object unsafeExpression) =>
+    nullable
+        ? '$expression == null ? null : $unsafeExpression'
+        : unsafeExpression;
